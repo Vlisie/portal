@@ -1,0 +1,107 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies{
+		classpath 'org.jooq:jooq-codegen:3.12.3'
+		classpath 'org.flywaydb:flyway-core:3.2.1'
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.1.6.RELEASE'
+	id 'java'
+	id "nu.studer.jooq" version "3.0.3"
+	id "org.flywaydb.flyway" version "6.0.8"
+}
+
+
+group = '.demo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//jooq
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.jooq:jooq'
+	jooqRuntime 'org.mariadb.jdbc:mariadb-java-client:2.4.0'
+	//web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//flyway
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.mariadb.jdbc:mariadb-java-client:2.3.0'
+	//springtest
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+def generatedDir = 'src/main/generated'
+
+jooq {
+	version = '3.12.3'
+	edition = 'OSS'
+	Portal(sourceSets.main) {
+		jdbc {
+			url = 'jdbc:mariadb://localhost:3306/portal'
+			user = 'root'
+			password = 'testertes'
+		}
+		generator {
+			name = 'org.jooq.codegen.DefaultGenerator'
+			strategy {
+				name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+			}
+			database {
+				name = 'org.jooq.meta.mariadb.MariaDBDatabase'
+				inputSchema = 'portal'
+			}
+			generate {
+				relations = true
+				deprecated = false
+				records = true
+				immutablePojos = true
+				fluentSetters = true
+				jpaAnnotations = true
+				jpaVersion = '2.2'
+				validationAnnotations = true
+				springAnnotations=true
+				javaTimeTypes = true
+				daos = true
+			}
+			target {
+				packageName = 'portal.db.gen'
+				directory = generatedDir
+			}
+		}
+	}
+}
+
+flyway {
+	url = 'jdbc:mariadb://localhost:3306/portal'
+	user = 'root'
+	password = 'testertes'
+	schemas = ['portal']
+	locations = ["filesystem:$project.projectDir/src/main/resources/db/migration"]
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs += generatedDir
+		}
+	}
+}
+
+clean.doLast {
+	project.file(generatedDir).deleteDir()
+}
+
+generatePortalJooqSchemaSource.dependsOn flywayMigrate
+compileJava.dependsOn generatePortalJooqSchemaSource
