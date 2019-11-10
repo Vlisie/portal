@@ -73,7 +73,6 @@ jooq {
 				validationAnnotations = true
 				springAnnotations=true
 				javaTimeTypes = true
-				daos = true
 			}
 			target {
 				packageName = 'portal.db.gen'
