@@ -4,7 +4,7 @@ import org.jooq.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import portal.db.gen.*;
-import portal.db.gen.tables.pojos.User;
+import portal.db.gen.tables.pojos.*;
 
 import java.util.*;
 
@@ -20,8 +20,8 @@ public class UserService {
 
 	@Autowired DSLContext m_dsl;
 
-	public List<User> getUsers() {
-		return m_dsl.selectFrom(Tables.USERS).fetchInto(User.class);
+	public List<Users> getUsers() {
+		return m_dsl.selectFrom(Tables.USERS).fetchInto(Users.class);
 	}
 
 	public void createUser(){

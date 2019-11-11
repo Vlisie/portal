@@ -20,7 +20,7 @@ public class UserController {
 
 	@GetMapping(value = "/user")
 	@ResponseBody
-	public List<User> getUsers() {
+	public List<Users> getUsers() {
 		return m_userService.getUsers();
 	}
 }
