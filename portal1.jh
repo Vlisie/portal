@@ -1,0 +1,50 @@
+
+entity Relatie {
+	id UUID,
+	voorNaam String,
+    achterNaam String,
+    initialen String,
+    weergaveNaam String,
+    geslacht Geslacht,
+    geboorteDatum LocalDate,
+    relatieType RelatieType,
+    inschrijvingsDatum Instant,
+    straatNaam String,
+    huisNummer Integer,
+    postCode String,
+    woonPlaats String,
+    land String,
+    email String,
+    email2 String,
+    telefoonNummer Integer,
+    telefoonNummer2 Integer,
+    telefoonNummer3 Integer,
+    rollen List<Rol>,
+    ibanCode String,
+    knsbRelatieNummer Long,
+    pasfoto Blob,
+    privacyVerklaring Blob
+}
+
+enum RelatieType {
+	LID, JEUGDSCHAATSLID, DONATEUR
+}
+
+enum Geslacht {
+	MAN, VROUW, X
+}
+
+entity Rol {
+	id UUID,
+	rolNaam String,
+	jeugdschaatsen Boolean,
+	startDatumRol Instant,
+    eindDatumRol Instant
+}
+
+relationship ManyToMany {
+	Relatie{rol} to Rol{relatie}
+}
+
+
+
